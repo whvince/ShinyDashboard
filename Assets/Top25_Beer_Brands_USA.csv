@@ -1,0 +1,22 @@
+beer_name,brewery_name,beer_id,ranking_within,heavy_light_flag
+Modelo Light ,Constellation Brands,11554,4,1
+Milwaukee's Best Ice,Molson Coors Brewing Company,1484,9,0
+Corona Light,Constellation Brands,233,3,1
+Icehouse,Molson Coors Brewing Company,1299,8,0
+Steel Reserve,Molson Coors Brewing Company,718,7,0
+Coors Banquet,Molson Coors Brewing Company,1276,6,1
+Blue Moon Belgian White,Molson Coors Brewing Company,1212,5,0
+Natural Ice,Anheuser-Busch InBev,653,8,1
+Bud Ice,Anheuser-Busch InBev,1642,7,0
+Miller High Life,Molson Coors Brewing Company,580,4,1
+Keystone Light,Molson Coors Brewing Company,1341,3,0
+Busch,Anheuser-Busch InBev,670,6,1
+Busch Light,Anheuser-Busch InBev,1390,5,1
+Natural Light,Anheuser-Busch InBev,1524,4,1
+Modelo Especial,Constellation Brands,1321,2,1
+Michelob Ultra,Anheuser-Busch InBev,108554,3,0
+Corona Extra,Constellation Brands,232,1,1
+Miller Lite,Molson Coors Brewing Company,332,2,1
+Budweiser,Anheuser-Busch InBev,65,2,1
+Coors Light,Molson Coors Brewing Company,837,1,1
+Bud Light,Anheuser-Busch InBev,1320,1,1
