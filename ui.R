@@ -1,7 +1,7 @@
 
 dashboardPage(
   
-  dashboardHeader(title = 'Beer Industry Analysis'), 
+  dashboardHeader(title = 'Beer Industry Study'), 
   
   
   dashboardSidebar(
@@ -11,7 +11,7 @@ dashboardPage(
   sidebarMenu(
     menuItem("Industry", tabName = "Industry", icon = icon("map")), 
     menuItem("Category", tabName = "Category", icon = icon("table")),
-    menuItem("LightorHeavy", tabName = "LightorHeavy", icon = icon("chart-line"))
+    menuItem("Light vs. Heavy", tabName = "LightorHeavy", icon = icon("chart-line"))
     ),
   
     selectizeInput(inputId = 'variableSelected', 
@@ -37,8 +37,7 @@ dashboardPage(
       
       tabItem(tabName = "Industry", 
               
-              fluidRow(box(htmlOutput("map"), width = "100%")),
-
+              fluidRow(box(htmlOutput("map"), width = "100%", title = 'Rating (out of 5) and Brewery Concentration by State')),
               fluidRow(box(plotlyOutput("style_concentration"), width = "100%"))
  
               ),
@@ -46,7 +45,6 @@ dashboardPage(
       tabItem(tabName = "Category", 
               fluidRow(box(dataTableOutput("table"), width = "100%"))
               ),
-      
       
       tabItem(tabName = "LightorHeavy", 
               fluidRow(box(plotlyOutput("lightHeavy"), width = "100%")), 

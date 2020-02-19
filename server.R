@@ -6,12 +6,11 @@ function(input, output){
                         'state',
                         input$variableSelected, 
                         options = list(region = "US", displayMode="regions",
-                                       resolution="provinces", width="auto", height="auto",
-                                       title='Rating by State and Brewery Concentration'))
+                                       resolution="provinces", width="auto", height="auto"
+                                       ))
     
   })
   
-
   
   output$style_concentration <- renderPlotly({
     
@@ -19,8 +18,11 @@ function(input, output){
       filter(style_category %in% input$categorySelected) %>%
       ggplot(aes(x = num_breweries, y = score_avg, text = style)) + 
       theme(plot.title = element_text(hjust = 0.5)) + 
-      coord_cartesian(ylim = c(2.0, 4.5)) + 
+      scale_y_continuous(limits = c(2.0, 4.5)) + 
+      scale_x_continuous(limits = c(0, 6500)) + 
       geom_point(aes(color = style_category)) + 
+      geom_hline(yintercept=3.23, linetype="dashed", color = "red") +
+      geom_vline(xintercept=3000, linetype="dashed", color = "red") +
       labs(title='Beer Style Concentration Analysis',
            x='Number of Breweries',
            y='Average Score') 
@@ -39,16 +41,15 @@ function(input, output){
   
   output$lightHeavy <- renderPlotly({
     
-    lightHeavy_plot <- ggplot(ranking_lightHeavy, aes(x = year, y = rank)) + 
-      scale_y_continuous(breaks=seq(1,14, by = 1), trans = "reverse")+
-      scale_x_continuous(breaks=seq(2000, 2018, by = 1))+
-      geom_line(aes(color = beer_name)) +
+    lightHeavy_plot <-  ggplot(rating_lightHeavy, aes(x=year, y = average_rating)) + 
+      geom_line(aes(color = HeavyLight)) +
       theme(plot.title = element_text(hjust = 0.5)) +
-      labs(title='For Pale Lager and Pilsner, Heavy is better',
+      labs(title='For Pale Lager and Pilsner, heavy beer is consistently rated higher than light.',
            x='Year',
-           y='Rank')
+           y='Rating')
     
-    ggplotly(lightHeavy_plot, tooltip = c('beer_name'))
+    
+    ggplotly(lightHeavy_plot, tooltip = c('HeavyLight'))
     
   })
   

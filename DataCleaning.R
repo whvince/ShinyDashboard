@@ -24,7 +24,7 @@ city_coords <- read_csv('city_coords.csv') %>% tbl_df()
 top_beers <- read_csv('Top25_Beer_Brands_USA.csv') %>% tbl_df()
 US_pop <- read.csv("US_Population.csv") %>% tbl_df()
 
-# Large file - don't reload everytime
+# Large file (>2GB) - don't reload everytime
 # File can be found at https://www.kaggle.com/ehallmar/beers-breweries-and-beer-reviews#breweries.csv
 # reviews <- read_csv("reviews.csv") %>% tbl_df()
 

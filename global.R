@@ -16,17 +16,27 @@ library(lubridate)
 
 # Read and clean raw data -------------------------------------------------
 
-beers <- read_csv("beers.csv") %>% tbl_df()
-beer_list <- read_csv("beer_list.csv") %>% tbl_df()
-breweries <- read_csv("breweries.csv") %>% tbl_df() %>% select(-notes)
-reviews_rating_ts <- read_csv("reviews_rating_ts.csv") %>% tbl_df() 
-reviews_rating <- read_csv("reviews_rating.csv") %>% tbl_df() 
-beer_category <- read_csv("beer_style_category.csv") %>% tbl_df()
-city_coords <- read_csv('city_coords.csv') %>% tbl_df()
-top_beers <- read_csv('Top25_Beer_Brands_USA.csv') %>% tbl_df()
-US_pop <- read.csv("US_Population.csv") %>% tbl_df()
+# Raw Data from Kaggle https://www.kaggle.com/ehallmar/beers-breweries-and-beer-reviews#breweries.csv
+beers <- read_csv("Assets/beers.csv") %>% tbl_df()
+beer_list <- read_csv("Assets/beer_list.csv") %>% tbl_df()
+breweries <- read_csv("Assets/breweries.csv") %>% tbl_df() %>% select(-notes)
 
-# Breweries
+# derived from reviews raw data. See Data Cleaning for more information
+reviews_rating_ts <- read_csv("Assets/reviews_rating_ts.csv") %>% tbl_df() 
+reviews_rating <- read_csv("Assets/reviews_rating.csv") %>% tbl_df() 
+
+# Source: mannual mapped using https://www.webstaurantstore.com/article/27/different-types-of-beers.html
+beer_category <- read_csv("Assets/beer_style_category.csv") %>% tbl_df()
+
+# Source
+city_coords <- read_csv('Assets/city_coords.csv') %>% tbl_df()
+
+# Source: https://www.usatoday.com/story/money/food/2018/10/17/beer-consumption-these-americas-26-top-selling-beers/38104743/
+top_beers <- read_csv('Assets/Top25_Beer_Brands_USA.csv') %>% tbl_df()
+
+US_pop <- read.csv("Assets/US_Population.csv") %>% tbl_df()
+
+# Breweries in North America Only
 breweries <- breweries[breweries$country != 'US'| (breweries$country == 'US' & !is.na(breweries$state)), ] %>% 
   filter(!is.na(id) & !is.na(city)) %>% 
   filter(country %in% c('US', 'CA', 'MX')) %>% 
@@ -36,7 +46,7 @@ breweries <- breweries[breweries$country != 'US'| (breweries$country == 'US' & !
 
 # Analysis ----------------------------------------------------------------
 
-# Rankings
+# Rankings of top beers year over year
 ranking <- reviews_rating_ts %>% 
   inner_join(top_beers, by = 'beer_id') %>% 
   filter(ranking_within <= 3 & year >=2001) %>% 
@@ -46,7 +56,7 @@ ranking <- reviews_rating_ts %>%
   group_by(year) %>% 
   mutate(rank = row_number())
 
-# Ranking 
+# Ranking - heavy beer is ranked higher than light
 ranking_lightHeavy <- reviews_rating_ts %>% 
   inner_join(top_beers, by = 'beer_id') %>% 
   filter(heavy_light_flag == 1 & year >=2001) %>% 
@@ -54,15 +64,27 @@ ranking_lightHeavy <- reviews_rating_ts %>%
   group_by(year) %>% 
   mutate(rank = row_number())
 
+ranking_lightHeavy$beer_name %>% unique()
 
-# Rating
+
+# Rating - heavy beer is rated higher than light
+rating_lightHeavy <- reviews_rating_ts %>% 
+  inner_join(top_beers, by = 'beer_id') %>% 
+  filter(heavy_light_flag == 1 & year >=2001) %>% 
+  mutate(HeavyLight= ifelse(grepl("Light",beer_name)|grepl("Lite",beer_name), "Light", "Heavy")) %>% 
+  group_by(HeavyLight,year) %>% 
+  summarise(average_rating = mean(score_avg))
+  
+
+
+# Rating - Pale Lager and Pilsner have the lowest rating
 category_rating <- beer_list %>% 
   inner_join(reviews_rating, by = "beer_id") %>% 
   group_by(style_category) %>% 
   summarise(score_avg = mean(score)) %>% 
   arrange(desc(score_avg))
 
-# Concentration
+# Concentration of beer categories
 category_concentration <- beer_list %>% 
   inner_join(select(breweries, -state_abbr, -brewery_types), by = 'brewery_id') %>% 
   select(style_category, brewery_id) %>% 
@@ -73,6 +95,19 @@ category_concentration <- beer_list %>%
 
 concentration <- inner_join(category_concentration, category_rating, by = "style_category") 
 
+style_concentration <- beer_list %>% 
+  inner_join(select(breweries, -state_abbr, -brewery_types), by = 'brewery_id') %>% 
+  select(style, brewery_id) %>% 
+  unique() %>% 
+  group_by(style) %>% 
+  summarise(num_breweries = n()) %>% 
+  arrange(desc(num_breweries))
+
+style_rating <- beer_list %>% 
+  inner_join(reviews_rating, by = "beer_id") %>% 
+  group_by(style_category, style) %>% 
+  summarise(score_avg = mean(score)) %>% 
+  arrange(desc(score_avg))
 
 # League Table
 complete_beer_info <- beer_list %>% 
